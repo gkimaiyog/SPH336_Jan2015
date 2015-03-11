@@ -13,7 +13,7 @@
 
 #include"gpio.h"
 #include"uart.h"
-
+#include "blinker.h"
 
 void delay(void);
 
@@ -39,21 +39,50 @@ int main(void){
 	//Loop forever
 	while(1)
 	{
-		toggle_LED1(); 
-		delay();
-		if(data_available()){
-			byte = uart_read();
+		//toggle_LED1(); 
+		byte = uart_read();
+		switch (byte)
+		{
+			case '0': blinker(0);
+			break;//toggle_LED0(); byte='n'; break;
+
+			case '1': blinker(1);
+			break;//toggle_LED1(); byte='n'; break;
+
+			case '2': blinker(2);
+			break;//toggle_LED2(); byte='n'; break;
+
+			case '3': blinker(3);
+			break;//toggle_LED3(); byte='n'; break;
+
+			case '4': blinker(4);
+			break;//toggle_LED4(); byte='n'; break;
+
+			case '5': blinker(5);
+			break;//toggle_LED5(); byte='n'; break;
+
+			case '6': blinker(6);
+			break;//toggle_LED6(); byte='n'; break;
+
+			case '7': blinker(7);
+			break;//toggle_LED7(); byte='n'; break;
+
+			case '8': blinker(8);
+			break;//toggle_LED8(); byte='n'; break;
+
+			case '9': blinker(9);
+			break;//toggle_LED9(); byte='n'; break;
+
+			default: main();
+			break;//toggle_LED0(); goto LOOP; break;
 		}
 		delay();
 	}
 }
 
 
-
-
-
 /*
-	brief  Silly delay
+	brief silly delay
 */
 void delay(void)
 {
