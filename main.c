@@ -11,17 +11,11 @@
  *
  */
 
-#include"gpio.h"
-#include"uart.h"
-#include "blinker.h"
-
-void delay(void);
-
-
+#include "main.h"
 
 int main(void){	
 	//temporally UART data holder
-	uint8_t byte=0;
+	uint8_t byte=0, blink=1;
 
 	//initialize system
 	SystemInit();
@@ -39,50 +33,28 @@ int main(void){
 	//Loop forever
 	while(1)
 	{
-		//toggle_LED1(); 
-		byte = uart_read();
-		switch (byte)
-		{
-			case '0': blinker(0);
-			break;//toggle_LED0(); byte='n'; break;
-
-			case '1': blinker(1);
-			break;//toggle_LED1(); byte='n'; break;
-
-			case '2': blinker(2);
-			break;//toggle_LED2(); byte='n'; break;
-
-			case '3': blinker(3);
-			break;//toggle_LED3(); byte='n'; break;
-
-			case '4': blinker(4);
-			break;//toggle_LED4(); byte='n'; break;
-
-			case '5': blinker(5);
-			break;//toggle_LED5(); byte='n'; break;
-
-			case '6': blinker(6);
-			break;//toggle_LED6(); byte='n'; break;
-
-			case '7': blinker(7);
-			break;//toggle_LED7(); byte='n'; break;
-
-			case '8': blinker(8);
-			break;//toggle_LED8(); byte='n'; break;
-
-			case '9': blinker(9);
-			break;//toggle_LED9(); byte='n'; break;
-
-			default: main();
-			break;//toggle_LED0(); goto LOOP; break;
+		if(blink) toggle_LEDS();
+		if(data_available()){
+			byte = uart_read();
+			if((byte>47 && byte<58)||(byte>64 && byte<71)){	//ascii characters for numbers from 0 to F only
+				if(byte<58) display((char)byte-48);			//ascii characters for numbers from 0 to 9 only
+				if(byte>58) display((char)byte-55);			//ascii characters for numbers from A to F only
+				blink=0;
+			}else if(byte==0x7e){	//a tilda(~) send microcontroller information
+				display((char)0x00);
+				sysinfo();
+				blink=0;
+			}else{					//new line character plus all others here
+				display((char)0x00);
+				blink=1;
+			}
 		}
 		delay();
 	}
 }
 
-
 /*
-	brief silly delay
+	brief  Silly delay
 */
 void delay(void)
 {
